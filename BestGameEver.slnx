@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="BestGameEver/BestGameEver.csproj" />
+  <Project Path="BestGameEverCore/BestGameEverCore.csproj" />
+</Solution>
