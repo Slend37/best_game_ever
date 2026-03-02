@@ -1,2 +1,5 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using BestGameEver;
+
+var game = new Game();
+game.Init();
+game.Run();

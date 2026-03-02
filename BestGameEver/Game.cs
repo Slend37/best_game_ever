@@ -1,0 +1,46 @@
+using System.Data;
+using System.Runtime.CompilerServices;
+
+namespace BestGameEver;
+
+public class Game
+{
+    public void Init()
+    {
+        Console.Clear();
+        Console.WriteLine("Game is running... Press Escape to Stop");
+    }
+    public void Run()
+    {
+        while (!GameIsEnded())
+        {
+            HandleInput();
+            Update();
+            Render();
+        }
+    }
+
+    private bool GameIsEnded()
+    {
+        return gameStopped;
+    }
+
+    private void HandleInput()
+    {
+        var key = Console.ReadKey(true);
+        if (key.Key == ConsoleKey.Escape)
+            gameStopped = true;
+    }
+    private void Update()
+    {
+        
+    }
+
+    private void Render()
+    {
+        Console.Clear();
+        Console.WriteLine("Game is running...");
+    }
+
+    private bool gameStopped = false;
+}
