@@ -1,5 +1,4 @@
 ﻿using BestGameEver;
 
-var game = new Game();
-game.Init();
-game.Run();
+Console.WriteLine(Game.Instance.Difficulty);
+Game.Instance.Run();
