@@ -1,6 +1,7 @@
 using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
 using BestGameEver.Gameplay;
+using BestGameEver.Services;
 
 namespace BestGameEver.Core;
 
@@ -46,12 +47,18 @@ public class Level
     private static IApple CreateApple()
     {
         Random random = new Random((int)DateTime.Now.Ticks);
+        List<IAppleCreator> factories = new List<IAppleCreator>
+        {
+            new GoldenAppleCreator(1, 10),
+            new NormalAppleCreator(1)
+        };
+
         switch(random.Next(2))
         {
             case 0:
-                return new NormalApple(1);
+                return factories[0].Create();
             default:
-                return new GoldenApple(1, 10);
+                return factories[1].Create();
         }
     }
     public void AddCell(Cell cell)
