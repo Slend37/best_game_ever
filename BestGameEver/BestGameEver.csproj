@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <ItemGroup>
-    <ProjectReference Include="..\BestGameEverCore\BestGameEverCore.csproj" />
+    <Folder Include="Core/" />
+    <Folder Include="Exceptions/" />
   </ItemGroup>
 
   <PropertyGroup>

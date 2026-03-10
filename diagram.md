@@ -45,7 +45,7 @@ classDiagram
         +ApplyEffect(Snake)
     }
 
-    class SpeedApple {
+    class ExpandApple {
         +ApplyEffect(Snake)
     }
 
@@ -53,7 +53,7 @@ classDiagram
         +ApplyEffect(Snake)
     }
 
-    class SlowApple {
+    class ConstrictingApple {
         +ApplyEffect(Snake)
     }
 
