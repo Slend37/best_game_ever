@@ -8,10 +8,16 @@ public class NormalAppleCreator : IAppleCreator
     {
         this.value = value;
     }
+
+    public NormalAppleCreator()
+    {
+        this.value = 1;
+    }
     public IApple Create()
     {
         return new NormalApple(value);
     }
+    
 
     private readonly int value;
 }

@@ -9,6 +9,12 @@ public class GoldenAppleCreator : IAppleCreator
         this.value = value;
         this.time = time;
     }
+
+    public GoldenAppleCreator()
+    {
+        this.value = 1;
+        this.time = 10;
+    }
     public IApple Create()
     {
         return new GoldenApple(value, time);

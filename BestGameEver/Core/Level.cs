@@ -14,7 +14,11 @@ public class Level
         if (width < 5 || height < 5)
             throw new ArgumentException("The level size is too small. It must be at least 5x5.");
         
-        Console.WriteLine(width + height);
+        factories = new List<IAppleCreator>
+        {
+            new GoldenAppleCreator(5, 5),
+            new NormalAppleCreator(3)
+        };
         
 
         for (int line = 0; line < height; line++)
@@ -47,19 +51,17 @@ public class Level
     private static IApple CreateApple()
     {
         Random random = new Random((int)DateTime.Now.Ticks);
-        List<IAppleCreator> factories = new List<IAppleCreator>
-        {
-            new GoldenAppleCreator(1, 10),
-            new NormalAppleCreator(1)
-        };
+        var factories = GetAppleFactories();
+        return factories[random.Next(factories.Count)].Create();
+    }
 
-        switch(random.Next(2))
+    private static List<IAppleCreator> GetAppleFactories()
+    {
+        return new List<IAppleCreator>
         {
-            case 0:
-                return factories[0].Create();
-            default:
-                return factories[1].Create();
-        }
+            new GoldenAppleCreator(),
+            new NormalAppleCreator()
+        };
     }
     public void AddCell(Cell cell)
     {
@@ -80,4 +82,5 @@ public class Level
                cells[position].IsPassable;
     }
     private readonly Dictionary<Position, Cell> cells = new();
+    private readonly List<IAppleCreator> factories;
 }
