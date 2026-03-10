@@ -16,8 +16,8 @@ public class Level
         
         factories = new List<IAppleCreator>
         {
-            new GoldenAppleCreator(5, 5),
-            new NormalAppleCreator(3)
+            new GoldenAppleCreator(),
+            new NormalAppleCreator()
         };
         
 
@@ -38,7 +38,7 @@ public class Level
         }
     }
 
-    private static Cell CreateInsideCell(int line, int column)
+    private Cell CreateInsideCell(int line, int column)
     {
         Cell result = new Cell(new Position(line, column), true);
         Random random = new Random((int)DateTime.Now.Ticks);
@@ -48,21 +48,13 @@ public class Level
         return result;
     }
 
-    private static IApple CreateApple()
+    private IApple CreateApple()
     {
         Random random = new Random((int)DateTime.Now.Ticks);
-        var factories = GetAppleFactories();
+
         return factories[random.Next(factories.Count)].Create();
     }
-
-    private static List<IAppleCreator> GetAppleFactories()
-    {
-        return new List<IAppleCreator>
-        {
-            new GoldenAppleCreator(),
-            new NormalAppleCreator()
-        };
-    }
+    
     public void AddCell(Cell cell)
     {
         if (!cells.ContainsKey(cell.Position))
