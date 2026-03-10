@@ -24,6 +24,14 @@ public class Game
             return instance;
         }
     }
+
+    private Game()
+    {
+        MapHeight = 100;
+        MapWidth = 100;
+        gameStopped = false;
+    }
+
     public void Init()
     {
         Console.Clear();
