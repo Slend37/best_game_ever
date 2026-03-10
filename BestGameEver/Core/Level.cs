@@ -12,15 +12,23 @@ public class Level
     {
         if (width < 5 || height < 5)
             throw new ArgumentException("The level size is too small. It must be at least 5x5.");
+        
+        Console.WriteLine(width + height);
+        
 
-        for (int line = 0; line < height; ++line)
+        for (int line = 0; line < height; line++)
         {
-            for (int column = 0; column < width; ++width)
+            for (int column = 0; column < width; column++)
             {
-                if (line == 0 || column == 0 || line == height - 1 || column == width -1)
+                if (line == 0 || column == 0 || line == height - 1 || column == width - 1)
+                {
                     AddCell(new Cell(new Position(line, column), false));
+                }
                 else
+                {
                     AddCell(CreateInsideCell(line, column));
+                }
+                    
             }
         }
     }

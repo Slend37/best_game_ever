@@ -1,8 +1,3 @@
-using System.ComponentModel;
-using System.Data;
-using System.Dynamic;
-using System.IO.Pipelines;
-using System.Runtime.CompilerServices;
 using BestGameEver.Core;
 
 namespace BestGameEver;
@@ -29,6 +24,7 @@ public class Game
     public void Init()
     {
         gameStopped = false;
+        Console.Clear();
     }
     public void Run()
     {
@@ -82,6 +78,7 @@ public class Game
 
     private void Render()
     {
+        Console.Clear();
         ClearDrawBuffer();
         DrawLevel();
         DrawSnake();
@@ -98,10 +95,13 @@ public class Game
     {
         MapHeight = 15;
         MapWidth = 40;
-
+        Console.WriteLine("Game...");
         drawBuffer = new char[MapHeight, MapWidth];
+        Console.WriteLine("Char...");
         level = new Level(MapWidth, MapHeight);
+        Console.WriteLine("Level...");
         snake = new Snake(3);
+        Console.WriteLine("Snake...");
 
         gameStopped = false;
     }

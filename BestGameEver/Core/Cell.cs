@@ -24,7 +24,7 @@ public class Cell
         apples.Remove(apple);
     }
 
-        public void RemoveAllApples()
+    public void RemoveAllApples()
     {
         apples.Clear();
     }
