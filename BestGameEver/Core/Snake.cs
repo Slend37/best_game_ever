@@ -21,17 +21,28 @@ public class Snake
         Protect = false;
         ProtectTime = 0;
         Position = new Position(5, 5);
+        WinSize = 8;
+        Direction = Direction.Right;
 
     }
-    public Snake(int size, bool protect, int protectTime, Position position)
+    public Snake(int size, bool protect, int protectTime, Position position, int winSize, Direction direction)
     {
         if (size < 3)
             throw new ArgumentException("Snake size must be 3 or more");
+
+        if (winSize < size)
+            throw new ArgumentException("Win size must be greater than or equal to snake size");
+
+        if (protectTime < 0)
+            throw new ArgumentException("Protect time can not be negative");
+
 
         Size = size;
         Protect = protect;
         ProtectTime += protectTime;
         Position = position;
+        WinSize = winSize;
+        Direction = direction;
 
     }
 

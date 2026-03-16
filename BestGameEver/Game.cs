@@ -1,4 +1,5 @@
 using BestGameEver.Core;
+using BestGameEver.Builders;
 
 namespace BestGameEver;
 
@@ -89,6 +90,7 @@ public class Game
     {
         Console.WriteLine($"Size: {snake.Size}");
         Console.WriteLine($"Protection time: {snake.ProtectTime}");
+        Console.WriteLine($"Win size: {snake.WinSize}");
     }
     
     private Game()
@@ -100,7 +102,14 @@ public class Game
         Console.WriteLine("Char...");
         level = new Level(MapWidth, MapHeight);
         Console.WriteLine("Level...");
-        snake = new Snake(3);
+        snake = new SnakeBuilder()
+            .SetSize(3)
+            .SetProtection(false)
+            .SetProtectionTime(0)
+            .SetPosition(new Position(5, 5))
+            .SetWinSize(8)
+            .SetDirection(Direction.Right)
+            .Build();
         Console.WriteLine("Snake...");
 
         gameStopped = false;
