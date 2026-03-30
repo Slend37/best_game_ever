@@ -17,6 +17,7 @@ public class Cell
     public void AddApple(IApple apple)
     {
         apples.Add(apple);
+        
     }
 
     public void RemoveApple(IApple apple)
