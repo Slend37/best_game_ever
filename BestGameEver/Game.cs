@@ -3,7 +3,7 @@ using BestGameEver.Builders;
 
 namespace BestGameEver;
 
-public class Game
+public class Game : IGame
 {
     public int MapWidth{ get; private set; }
     public int MapHeight{ get; private set; }
@@ -29,7 +29,7 @@ public class Game
     }
     public void Run()
     {
-        while (!GameIsEnded())
+        while (!IsGameEnded())
         {
             HandleInput();
             Update();
@@ -37,12 +37,12 @@ public class Game
         }
     }
 
-    private bool GameIsEnded()
+    public bool IsGameEnded()
     {
         return gameStopped;
     }
 
-    private void HandleInput()
+    public void HandleInput()
     {
         var key = Console.ReadKey(true);
         switch (key.Key)
@@ -68,7 +68,7 @@ public class Game
                 break;
         }
     }
-    private void Update()
+    public void Update()
     {
         Cell curr = level.GetCell(snake.Position);
         foreach(var apple in curr.Apples)
@@ -77,7 +77,7 @@ public class Game
         curr.RemoveAllApples();
     }
 
-    private void Render()
+    public void Render()
     {
         Console.Clear();
         ClearDrawBuffer();
