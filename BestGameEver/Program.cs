@@ -8,9 +8,15 @@ namespace BestGameEver
     {
         static void Main(string[] args)
         {
+            IGame game = Game.Instance;
+            var gameLoopFacade = new GameLoopFacade(game);
+
+            gameLoopFacade.Run();
+
             // Console.WriteLine("Starting...");
             // Game.Instance.Run();
 
+            /*
             var snake = new SnakeBuilder()
                 .SetSize(3)
                 .SetProtectionTime(0)
@@ -21,6 +27,7 @@ namespace BestGameEver
 
             Console.WriteLine($"Итоговый размер: {stats.GetSize()}");
             Console.WriteLine($"Итоговое время защиты: {stats.GetProtectTime()}");
+            */
         }
     }
 }
