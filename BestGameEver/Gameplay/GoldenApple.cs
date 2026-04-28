@@ -4,7 +4,7 @@ namespace BestGameEver.Gameplay;
 
 public class GoldenApple : IApple
 {
-    public int Value {get; private set;}
+    public int Value_ {get; private set;}
     public int Time {get; private set; }
 
     public GoldenApple(int value, int time)
@@ -14,14 +14,14 @@ public class GoldenApple : IApple
         if (time < 0)
             throw new ArgumentException("Time can not be negative");
 
-        Value = value;
+        Value_ = value;
         Time = time;
         
     }
 
     public void Get(Snake snake)
     {
-        snake.Size += Value;
+        snake.Size += Value_;
         snake.Protect = true;
         snake.ProtectTime += Time;
     }

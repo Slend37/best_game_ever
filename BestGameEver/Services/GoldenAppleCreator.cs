@@ -4,6 +4,8 @@ namespace BestGameEver.Services;
 
 public class GoldenAppleCreator : IAppleCreator
 {
+    private int addValue = 1;
+    private int addTime = 10;
     public GoldenAppleCreator(int value, int time)
     {
         this.value = value;
@@ -12,8 +14,8 @@ public class GoldenAppleCreator : IAppleCreator
 
     public GoldenAppleCreator()
     {
-        this.value = 1;
-        this.time = 10;
+        this.value = addValue;
+        this.time = addTime;
     }
     public IApple Create()
     {

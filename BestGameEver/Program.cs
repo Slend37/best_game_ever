@@ -1,6 +1,7 @@
-﻿using BestGameEver.Core;
-using BestGameEver.Builders;
-
+﻿// Program.cs
+using BestGameEver.Core;
+using BestGameEver;
+using BestGameEver.Core.Components;
 
 namespace BestGameEver
 {
@@ -8,26 +9,25 @@ namespace BestGameEver
     {
         static void Main(string[] args)
         {
-            IGame game = Game.Instance;
-            var gameLoopFacade = new GameLoopFacade(game);
-
-            gameLoopFacade.Run();
-
-            // Console.WriteLine("Starting...");
-            // Game.Instance.Run();
-
-            /*
-            var snake = new SnakeBuilder()
-                .SetSize(3)
-                .SetProtectionTime(0)
-                .Build();
-
-            ISnakeStats stats = new BaseSnakeStats(snake);
-            stats = new SizeBonusDecorator(new ProtectTimeBonusDecorator(new SizePenaltyDecorator(stats, 2), 10), 5);
-
-            Console.WriteLine($"Итоговый размер: {stats.GetSize()}");
-            Console.WriteLine($"Итоговое время защиты: {stats.GetProtectTime()}");
-            */
+            Console.Title = "Snake Game";
+            Console.WindowWidth = 45;
+            Console.WindowHeight = 20;
+            
+            var renderer = new ConsoleRenderer(40, 15);
+            var inputHandler = new ConsoleInputHandler();
+            var stateManager = new GameStateManager();
+            var gameLoop = new SimpleGameLoop();
+            
+            var game = new GameFacade(
+                renderer,
+                inputHandler,
+                stateManager,
+                gameLoop,
+                mapWidth: 40,
+                mapHeight: 15
+            );
+            
+            game.StartGame();
         }
     }
 }

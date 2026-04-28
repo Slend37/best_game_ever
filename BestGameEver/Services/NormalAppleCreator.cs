@@ -4,6 +4,7 @@ namespace BestGameEver.Services;
 
 public class NormalAppleCreator : IAppleCreator
 {
+    private int addValue = 1;
     public NormalAppleCreator(int value)
     {
         this.value = value;
@@ -11,7 +12,7 @@ public class NormalAppleCreator : IAppleCreator
 
     public NormalAppleCreator()
     {
-        this.value = 1;
+        this.value = addValue;
     }
     public IApple Create()
     {

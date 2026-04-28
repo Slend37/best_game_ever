@@ -11,17 +11,21 @@ public class Snake
     public Direction Direction {get; private set; }
 
     public Position Position {get; set; }
+    private int minSize = 3;
+    private int startWinSize = 8;
+    private int startProtectTime = 0;
+    private Position startPosition = new Position(5,5);
 
     public Snake(int size)
     {
-        if (size < 3)
+        if (size < minSize)
             throw new ArgumentException("Snake size must be 3 or more");
 
         Size = size;
         Protect = false;
-        ProtectTime = 0;
-        Position = new Position(5, 5);
-        WinSize = 8;
+        ProtectTime = startProtectTime;
+        Position = startPosition;
+        WinSize = startWinSize;
         Direction = Direction.Right;
 
     }
