@@ -8,13 +8,16 @@ namespace BestGameEver.Core;
 public class Level
 {
     public IEnumerable<Cell> Cells => cells.Values;
+    private int widthMinSize = 5;
+    private int heightMinSize = 5;
+    private int newAppleChance = 5;
 
     public Level(int width, int height)
     {
-        if (width < 5 || height < 5)
+        if (width < widthMinSize || height < heightMinSize)
             throw new ArgumentException("The level size is too small. It must be at least 5x5.");
         
-        factories = new List<IAppleCreator>
+        creators = new List<IAppleCreator>
         {
             new GoldenAppleCreator(),
             new NormalAppleCreator()
@@ -42,7 +45,7 @@ public class Level
     {
         Cell result = new Cell(new Position(line, column), true);
         Random random = new Random((int)DateTime.Now.Ticks);
-        while(random.Next(100) < 5)
+        while(random.Next(100) < newAppleChance)
             result.AddApple(CreateApple());
             
         return result;
@@ -52,7 +55,7 @@ public class Level
     {
         Random random = new Random((int)DateTime.Now.Ticks);
 
-        return factories[random.Next(factories.Count)].Create();
+        return creators[random.Next(creators.Count)].Create();
     }
     
     public void AddCell(Cell cell)
@@ -74,5 +77,5 @@ public class Level
                cells[position].IsPassable;
     }
     private readonly Dictionary<Position, Cell> cells = new();
-    private readonly List<IAppleCreator> factories;
+    private readonly List<IAppleCreator> creators;
 }
