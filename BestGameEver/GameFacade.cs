@@ -2,6 +2,8 @@
 using BestGameEver.Core;
 using BestGameEver.Builders;
 using BestGameEver.Core.Components;
+using System.Runtime.CompilerServices;
+using Microsoft.VisualBasic;
 
 namespace BestGameEver;
 
@@ -11,6 +13,7 @@ public class GameFacade
     private readonly IGameInputHandler _inputHandler;
     private readonly IGameStateManager _stateManager;
     private readonly IGameLoop _gameLoop;
+
     
     private Level _level;
     private Snake _snake;
@@ -63,6 +66,7 @@ public class GameFacade
             .SetPosition(new Position(5, 5))
             .SetWinSize(8)
             .SetDirection(Direction.Right)
+            .SetBody()
             .Build();
     }
     
@@ -139,7 +143,10 @@ public class GameFacade
     
     private void DrawSnake()
     {
-        _drawBuffer[_snake.Position.Line, _snake.Position.Column] = '@';
+        foreach (var part in _snake.Body.GetAllPositions())
+        {
+            _drawBuffer[part.Line, part.Column] = '@';
+        }
     }
     
     private void Cleanup()

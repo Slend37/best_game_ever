@@ -24,5 +24,18 @@ public class GoldenApple : IApple
         snake.Size += Value_;
         snake.Protect = true;
         snake.ProtectTime += Time;
+        Position maybe = new Position(snake.Body.GetPositionAt(snake.Body.Count-1).Line - 1, snake.Body.GetPositionAt(snake.Body.Count-1).Column);
+        if (snake.Body.GetAllPositions().Contains(maybe)){
+            maybe = new Position(snake.Body.GetPositionAt(snake.Body.Count-1).Line, snake.Body.GetPositionAt(snake.Body.Count-1).Column - 1);
+            if (snake.Body.GetAllPositions().Contains(maybe))
+            {
+                maybe = new Position(snake.Body.GetPositionAt(snake.Body.Count-1).Line + 1, snake.Body.GetPositionAt(snake.Body.Count-1).Column);
+                if (snake.Body.GetAllPositions().Contains(maybe))
+                {
+                    maybe = new Position(snake.Body.GetPositionAt(snake.Body.Count-1).Line, snake.Body.GetPositionAt(snake.Body.Count-1).Column + 1);
+                }
+            }
+        } 
+        snake.Body.AddPosition(maybe);
     }
 }

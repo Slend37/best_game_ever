@@ -10,6 +10,7 @@ public class SnakeBuilder
     private Position position = new Position(5, 5);
     private int winSize = 8;
     private Direction direction = Direction.Right;
+    private Body body = new Body();
 
     public SnakeBuilder SetSize(int value)
     {
@@ -47,8 +48,16 @@ public class SnakeBuilder
         return this;
     }
 
+    public SnakeBuilder SetBody()
+    {
+        body.AddPosition(5, 5);
+        body.AddPosition(5, 4);
+        body.AddPosition(5, 3);
+        return this;
+    }
+
     public Snake Build()
     {
-        return new Snake(size, protect, protectTime, position, winSize, direction);
+        return new Snake(size, protect, protectTime, position, winSize, direction, body);
     }
 }
