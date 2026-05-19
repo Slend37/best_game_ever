@@ -88,4 +88,8 @@ public class Snake
         }
         Direction = direction;
     }
+    public void _SetDirection(Direction direction)
+    {
+        Direction = direction;
+    }
 }

@@ -4,6 +4,8 @@ using BestGameEver.Builders;
 using BestGameEver.Core.Components;
 using System.Runtime.CompilerServices;
 using Microsoft.VisualBasic;
+using System.Timers;
+using System.Security.Cryptography;
 
 namespace BestGameEver;
 
@@ -14,7 +16,7 @@ public class GameFacade
     private readonly IGameStateManager _stateManager;
     private readonly IGameLoop _gameLoop;
 
-    
+    private System.Timers.Timer snakeTimer;
     private Level _level;
     private Snake _snake;
     private char[,] _drawBuffer;
@@ -42,16 +44,40 @@ public class GameFacade
     {
         InitializeGame();
         _gameLoop.Start();
+        snakeTimer = new System.Timers.Timer(1000);
+        snakeTimer.Elapsed += Tick;
+        snakeTimer.Enabled = true;
         
         while (_stateManager.IsGameRunning)
         {
             _gameLoop.Update();
             ProcessInput();
+            Thread.Sleep(10);
             UpdateGame();
             RenderGame();
         }
         
         Cleanup();
+    }
+
+    private void Tick(object sender, ElapsedEventArgs e)
+    {
+            if (_snake.Direction == Direction.Up)
+            {
+                _snake.Move(Direction.Up);   
+            }
+            else if (_snake.Direction == Direction.Right)
+            {
+                _snake.Move(Direction.Right);
+            }
+            else if (_snake.Direction == Direction.Left)
+            {
+                _snake.Move(Direction.Left);
+            }
+            else
+            {
+                _snake.Move(Direction.Down);
+            }
     }
     
     private void InitializeGame()
@@ -72,34 +98,54 @@ public class GameFacade
     
     private void ProcessInput()
     {
-        var key = _inputHandler.GetKey();
-        
-        if (_inputHandler.IsExitKey(key))
+        while (_inputHandler.HasKey())
         {
-            _stateManager.StopGame();
-            return;
-        }
+            var key = _inputHandler.GetKey();
         
-        switch (key)
-        {
-            case ConsoleKey.UpArrow:
-                if (_level.CanMoveTo(_snake.Position.Up()))
-                    _snake.Move(Direction.Up);
-                break;
-            case ConsoleKey.RightArrow:
-                if (_level.CanMoveTo(_snake.Position.Right()))
-                    _snake.Move(Direction.Right);
-                break;
-            case ConsoleKey.DownArrow:
-                if (_level.CanMoveTo(_snake.Position.Down()))
-                    _snake.Move(Direction.Down);
-                break;
-            case ConsoleKey.LeftArrow:
-                if (_level.CanMoveTo(_snake.Position.Left()))
-                    _snake.Move(Direction.Left);
-                break;
+            if (_inputHandler.IsExitKey(key))
+            {
+                _stateManager.StopGame();
+                return;
+            }
+            
+            switch (key)
+            {
+                case ConsoleKey.UpArrow:
+                    if (_level.CanMoveTo(_snake.Position.Up()))
+                        if (_snake.Direction == Direction.Down)
+                        {
+                            break;
+                        } 
+                        _snake._SetDirection(Direction.Up);
+                    break;
+                case ConsoleKey.RightArrow:
+                    if (_level.CanMoveTo(_snake.Position.Right()))
+                        if (_snake.Direction == Direction.Left)
+                        {
+                            break;
+                        } 
+                        _snake._SetDirection(Direction.Right);
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (_level.CanMoveTo(_snake.Position.Down()))
+                        if (_snake.Direction == Direction.Up)
+                        {
+                            break;
+                        } 
+                        _snake._SetDirection(Direction.Down);
+                    break;
+                case ConsoleKey.LeftArrow:
+                    if (_level.CanMoveTo(_snake.Position.Left()))
+                        if (_snake.Direction == Direction.Right)
+                        {
+                            break;
+                        } 
+                        _snake._SetDirection(Direction.Left);
+                    break;
+            }
         }
     }
+        
     
     private void UpdateGame()
     {
