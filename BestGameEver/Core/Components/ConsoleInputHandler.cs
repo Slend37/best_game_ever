@@ -11,4 +11,8 @@ public class ConsoleInputHandler : IGameInputHandler
     {
         return key == ConsoleKey.Escape;
     }
+        public bool HasKey()
+    {
+        return Console.KeyAvailable;
+    }
 }

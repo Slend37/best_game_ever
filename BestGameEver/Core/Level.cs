@@ -68,7 +68,7 @@ public class Level
     public Cell GetCell(Position position)
     {
         if (!cells.ContainsKey(position))
-            throw new ArgumentException("This cell does not exist.");
+            throw new ArgumentException("GAME OVER!!!");
         return cells[position];
     }
     public bool CanMoveTo(Position position)
