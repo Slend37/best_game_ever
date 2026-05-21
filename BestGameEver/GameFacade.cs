@@ -62,22 +62,29 @@ public class GameFacade
 
     private void Tick(object sender, ElapsedEventArgs e)
     {
-            if (_snake.Direction == Direction.Up)
-            {
-                _snake.Move(Direction.Up);   
-            }
-            else if (_snake.Direction == Direction.Right)
-            {
-                _snake.Move(Direction.Right);
-            }
-            else if (_snake.Direction == Direction.Left)
-            {
-                _snake.Move(Direction.Left);
-            }
-            else
-            {
-                _snake.Move(Direction.Down);
-            }
+        if (_snake.Direction == Direction.Up)
+        {
+            _snake.Move(Direction.Up);
+        }
+        else if (_snake.Direction == Direction.Right)
+        {
+            _snake.Move(Direction.Right);
+        }
+        else if (_snake.Direction == Direction.Left)
+        {
+            _snake.Move(Direction.Left);
+        }
+        else
+        {
+            _snake.Move(Direction.Down);
+        }
+        
+        // Проверяем, не врезалась ли голова в тело
+        if (_snake.Body.IsHeadCollidingWithBody())
+        {
+            Console.WriteLine("GAME OVER!!!");
+            _stateManager.StopGame();
+        }
     }
     
     private void InitializeGame()
@@ -199,6 +206,7 @@ public class GameFacade
     {
         _gameLoop.Stop();
         Console.Clear();
+        Console.WriteLine("You finished the game with the score: ", _snake.Size);
         Console.WriteLine("Game Over! Press any key to exit...");
         Console.ReadKey();
         Console.CursorVisible = true;
