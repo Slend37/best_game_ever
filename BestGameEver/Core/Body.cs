@@ -19,6 +19,24 @@ public class Body
             : new List<Position>();
     }
 
+    public bool IsHeadCollidingWithBody()
+    {
+        if (_positions.Count <= 1) return false;
+        
+        Position head = _positions[0];
+        for (int i = 1; i < _positions.Count; i++)
+        {
+            if (_positions[i].Equals(head))
+                return true;
+        }
+
+        if ((head.Column < 1) || (head.Column > 38) || (head.Line < 1) || (head.Line > 13))
+        {
+            return true;
+        }
+        return false;
+    }
+
     public Position[] GetAllPositions()
     {
         return _positions.ToArray();
@@ -63,6 +81,7 @@ public class Body
 
     public bool UpdatePosition(int index, Position newPosition)
     {
+
         if (index < 0 || index >= _positions.Count)
             return false;
 
@@ -95,7 +114,7 @@ public class Body
 
     public bool ContainsPosition(Position position)
     {
-        return _positions.Contains(position);
+        return _positions.Skip(0).Contains(position);
     }
 
     public void ClearAllPositions()

@@ -11,8 +11,6 @@ namespace BestGameEver
         static void Main(string[] args)
         {
             Console.Title = "Snake Game";
-            Console.WindowWidth = 45;
-            Console.WindowHeight = 20;
             
             var renderer = new ConsoleRenderer(40, 15);
             var inputHandler = new ConsoleInputHandler();
