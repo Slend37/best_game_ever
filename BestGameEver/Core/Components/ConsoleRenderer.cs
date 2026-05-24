@@ -42,4 +42,19 @@ public class ConsoleRenderer : IGameRenderer
     public void Flush()
     {
     }
+    public void DrawText(string text)
+    {
+        Console.WriteLine(text);
+    }
+    public void Draw_(char[,] buffer)
+    {
+        for (int i = 0; i < buffer.GetLength(0); i++)
+        {
+            for (int j = 0; j < buffer.GetLength(1); j++)
+            {
+                Console.Write(buffer[i, j]);
+            }
+            Console.WriteLine();
+        }
+    }
 }
