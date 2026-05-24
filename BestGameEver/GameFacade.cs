@@ -2,10 +2,7 @@
 using BestGameEver.Core;
 using BestGameEver.Builders;
 using BestGameEver.Core.Components;
-using System.Runtime.CompilerServices;
-using Microsoft.VisualBasic;
 using System.Timers;
-using System.Security.Cryptography;
 
 namespace BestGameEver;
 
@@ -15,14 +12,17 @@ public class GameFacade
     private readonly IGameInputHandler _inputHandler;
     private readonly IGameStateManager _stateManager;
     private readonly IGameLoop _gameLoop;
+    private readonly KeyRemapper _keyRemapper;
 
-    private System.Timers.Timer snakeTimer;
+    private System.Timers.Timer _gameTimer;
     private Level _level;
     private Snake _snake;
     private char[,] _drawBuffer;
     
     private readonly int _mapWidth;
     private readonly int _mapHeight;
+    private readonly int _gameSpeed;
+    private bool _isPaused;
     
     public GameFacade(
         IGameRenderer renderer,
@@ -38,53 +38,81 @@ public class GameFacade
         _gameLoop = gameLoop;
         _mapWidth = mapWidth;
         _mapHeight = mapHeight;
+        
+        _keyRemapper = new KeyRemapper(renderer, inputHandler);
+        
+        _keyRemapper.OnKeyRemapped += OnKeyRemapped;
+        
+        _gameSpeed = 500;
+        _isPaused = false;
+    }
+    
+    private void OnKeyRemapped(Direction direction, ConsoleKey newKey)
+    {
+        _renderer.DrawText($"Movement for {direction} is now bound to {newKey}");
+        System.Threading.Thread.Sleep(800);
+        
+        ResumeGame();
     }
     
     public void StartGame()
     {
         InitializeGame();
         _gameLoop.Start();
-        snakeTimer = new System.Timers.Timer(1000);
-        snakeTimer.Elapsed += Tick;
-        snakeTimer.Enabled = true;
+        
+        SetupGameTimer();
         
         while (_stateManager.IsGameRunning)
         {
             _gameLoop.Update();
             ProcessInput();
             Thread.Sleep(10);
-            UpdateGame();
+            
+            if (!_isPaused)
+            {
+                UpdateGame();
+            }
+            
             RenderGame();
         }
         
         Cleanup();
     }
 
-    private void Tick(object sender, ElapsedEventArgs e)
+    private void SetupGameTimer()
     {
-        if (_snake.Direction == Direction.Up)
+        _gameTimer = new System.Timers.Timer(_gameSpeed);
+        _gameTimer.Elapsed += OnGameTick;
+        _gameTimer.AutoReset = true;
+        _gameTimer.Enabled = true;
+    }
+
+    private void OnGameTick(object sender, ElapsedEventArgs e)
+    {
+        if (!_stateManager.IsGameRunning || _isPaused)
+            return;
+            
+        _snake.Move(_snake.Direction);
+        
+        if (!_level.CanMoveTo(_snake.Position))
         {
-            _snake.Move(Direction.Up);
-        }
-        else if (_snake.Direction == Direction.Right)
-        {
-            _snake.Move(Direction.Right);
-        }
-        else if (_snake.Direction == Direction.Left)
-        {
-            _snake.Move(Direction.Left);
-        }
-        else
-        {
-            _snake.Move(Direction.Down);
+            GameOver("You hit the wall!");
+            return;
         }
         
-        // Проверяем, не врезалась ли голова в тело
         if (_snake.Body.IsHeadCollidingWithBody())
         {
-            Console.WriteLine("GAME OVER!!!");
-            _stateManager.StopGame();
+            GameOver("You collided with yourself!");
+            return;
         }
+    }
+    
+    private void GameOver(string reason)
+    {
+        _stateManager.StopGame();
+        _renderer.Clear();
+        _renderer.DrawText($"GAME OVER! {reason}");
+        _renderer.DrawText($"Your final score: {_snake.Size}");
     }
     
     private void InitializeGame()
@@ -115,52 +143,94 @@ public class GameFacade
                 return;
             }
             
-            switch (key)
+            if (_keyRemapper.IsRemapKey(key) && !_isPaused)
             {
-                case ConsoleKey.UpArrow:
-                    if (_level.CanMoveTo(_snake.Position.Up()))
-                        if (_snake.Direction == Direction.Down)
-                        {
-                            break;
-                        } 
-                        _snake._SetDirection(Direction.Up);
-                    break;
-                case ConsoleKey.RightArrow:
-                    if (_level.CanMoveTo(_snake.Position.Right()))
-                        if (_snake.Direction == Direction.Left)
-                        {
-                            break;
-                        } 
-                        _snake._SetDirection(Direction.Right);
-                    break;
-                case ConsoleKey.DownArrow:
-                    if (_level.CanMoveTo(_snake.Position.Down()))
-                        if (_snake.Direction == Direction.Up)
-                        {
-                            break;
-                        } 
-                        _snake._SetDirection(Direction.Down);
-                    break;
-                case ConsoleKey.LeftArrow:
-                    if (_level.CanMoveTo(_snake.Position.Left()))
-                        if (_snake.Direction == Direction.Right)
-                        {
-                            break;
-                        } 
-                        _snake._SetDirection(Direction.Left);
-                    break;
+                PauseGame();
+                _keyRemapper.OpenRemappingMenu();
+                RenderGame();
+                continue;
+            }
+            
+            if (_keyRemapper.IsInRemappingMode())
+            {
+                _keyRemapper.ProcessRemappingInput(key);
+                RenderGame();
+                continue;
+            }
+            
+            if (_isPaused)
+                continue;
+            
+            if (_keyRemapper.TryGetDirection(key, out var requestedDirection))
+            {
+                if (IsOppositeDirection(requestedDirection, _snake.Direction))
+                    continue;
+                
+                var newPosition = GetPositionInDirection(_snake.Position, requestedDirection);
+                if (_level.CanMoveTo(newPosition))
+                {
+                    _snake._SetDirection(requestedDirection);
+                }
             }
         }
     }
-        
+    
+    private void PauseGame()
+    {
+        _isPaused = true;
+        _gameTimer.Stop();
+    }
+    
+    private void ResumeGame()
+    {
+        _isPaused = false;
+        _gameTimer.Start();
+    }
+    
+    private bool IsOppositeDirection(Direction requested, Direction current)
+    {
+        return (requested == Direction.Up && current == Direction.Down) ||
+               (requested == Direction.Down && current == Direction.Up) ||
+               (requested == Direction.Left && current == Direction.Right) ||
+               (requested == Direction.Right && current == Direction.Left);
+    }
+    
+    private Position GetPositionInDirection(Position pos, Direction direction)
+    {
+        return direction switch
+        {
+            Direction.Up => pos.Up(),
+            Direction.Down => pos.Down(),
+            Direction.Left => pos.Left(),
+            Direction.Right => pos.Right(),
+            _ => pos
+        };
+    }
     
     private void UpdateGame()
     {
-        Cell curr = _level.GetCell(_snake.Position);
-        foreach (var apple in curr.Apples)
-            apple.Get(_snake);
+        Cell currentCell = _level.GetCell(_snake.Position);
         
-        curr.RemoveAllApples();
+        foreach (var apple in currentCell.Apples)
+        {
+            apple.Get(_snake);
+        }
+        
+        currentCell.RemoveAllApples();
+        
+        if (_snake.Size >= _snake.WinSize)
+        {
+            WinGame();
+        }
+    }
+    
+    private void WinGame()
+    {
+        _stateManager.StopGame();
+        _renderer.Clear();
+        _renderer.DrawText($"YOU WIN! Congratulations!");
+        _renderer.DrawText($"Final size: {_snake.Size}");
+        _renderer.DrawText("Press any key to continue...");
     }
     
     private void RenderGame()
@@ -172,8 +242,25 @@ public class GameFacade
         _renderer.Clear();
         _renderer.Draw(_drawBuffer);
         
-        string status = $"Size: {_snake.Size} | Protection: {_snake.ProtectTime}s | Win size: {_snake.WinSize}";
+        var bindings = _keyRemapper.GetCurrentBindings();
+        string status = $"Size: {_snake.Size} | Protection: {_snake.ProtectTime}s | Win: {_snake.WinSize} | ";
+        status += $"Controls: [{bindings[Direction.Up]}/{bindings[Direction.Down]}/{bindings[Direction.Left]}/{bindings[Direction.Right]}] ";
+        status += $"| Press R to remap keys";
+        
+        if (_isPaused)
+        {
+            status += " | PAUSED - Remapping mode";
+        }
+        
         _renderer.DrawStatus(status);
+        
+        if (_isPaused)
+        {
+            _renderer.DrawText("");
+            _renderer.DrawText("=== REMAPPING MODE ===");
+            _renderer.DrawText("Game is paused while you customize controls");
+            _renderer.DrawText("Follow the instructions above to remap keys");
+        }
     }
     
     private void ClearDrawBuffer()
@@ -196,18 +283,23 @@ public class GameFacade
     
     private void DrawSnake()
     {
-        foreach (var part in _snake.Body.GetAllPositions())
+        var positions = _snake.Body.GetAllPositions().ToList();
+        for (int i = 0; i < positions.Count; i++)
         {
-            _drawBuffer[part.Line, part.Column] = '@';
+            char symbol = (i == 0) ? '@' : 'o';
+            _drawBuffer[positions[i].Line, positions[i].Column] = symbol;
         }
     }
     
     private void Cleanup()
     {
         _gameLoop.Stop();
+        _gameTimer?.Stop();
+        _gameTimer?.Dispose();
+        
         Console.Clear();
-        Console.WriteLine("You finished the game with the score: ", _snake.Size);
-        Console.WriteLine("Game Over! Press any key to exit...");
+        Console.WriteLine($"Game Over! Your final score: {_snake.Size}");
+        Console.WriteLine("Press any key to exit...");
         Console.ReadKey();
         Console.CursorVisible = true;
     }

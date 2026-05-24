@@ -9,7 +9,7 @@ public class SnakeTests
     {
         var startPosition = new Position(5, 5);
 
-        var snake = new Snake(3, true, 7, startPosition, 10, Direction.Right);
+        var snake = new Snake(3);
 
         Assert.Equal(3, snake.Size);
         Assert.True(snake.Protect);
@@ -23,7 +23,7 @@ public class SnakeTests
     [Fact]
     public void Move_Up_ChangesPositionAndDirection()
     {
-        var snake = new Snake(3, false, 0, new Position(5, 5), 8, Direction.Right);
+        var snake = new Snake(3);
 
         snake.Move(Direction.Up);
 
@@ -41,13 +41,13 @@ public class SnakeTests
     [Fact]
     public void Constructor_WinSizeLessThanSize_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() => new Snake(5, false, 0, new Position(5, 5), 4, Direction.Right));
+        Assert.Throws<ArgumentException>(() => new Snake(5));
     }
 
     [Fact]
     public void Move_ShouldNotAllowImmediateReverseDirection_IntentionallyFailsUntilRuleIsImplemented()
     {
-        var snake = new Snake(3, false, 0, new Position(5, 5), 8, Direction.Right);
+        var snake = new Snake(3);
 
         snake.Move(Direction.Left);
 

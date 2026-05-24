@@ -6,4 +6,6 @@ public interface IGameRenderer
     void Draw(char[,] buffer);
     void DrawStatus(string status);
     void Flush();
+    void DrawText(string text);
+    void Draw_(char[,] buffer);
 }
