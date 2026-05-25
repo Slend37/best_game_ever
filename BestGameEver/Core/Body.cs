@@ -6,6 +6,10 @@ namespace BestGameEver.Core;
 public class Body
 {
     private List<Position> _positions;
+    private int blockField1 = 1;
+    private int blockField2 = 38;
+    private int blockField3 = 1;
+    private int blockField4 = 13;
 
     public Body()
     {
@@ -30,7 +34,8 @@ public class Body
                 return true;
         }
 
-        if ((head.Column < 1) || (head.Column > 38) || (head.Line < 1) || (head.Line > 13))
+        if ((head.Column < blockField1) || (head.Column > blockField2) ||
+            (head.Line < blockField3) || (head.Line > blockField4))
         {
             return true;
         }

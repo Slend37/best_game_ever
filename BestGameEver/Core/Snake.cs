@@ -18,7 +18,7 @@ public class Snake
 
     public Position Position {get; set; }
     private int minSize = 3;
-    private int startWinSize = 8;
+    private int startWinSize = 10;
     private int startProtectTime = 0;
     private Position startPosition = new Position(5,5);
 

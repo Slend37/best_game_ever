@@ -21,8 +21,10 @@ public class GameFacade
     
     private readonly int _mapWidth;
     private readonly int _mapHeight;
-    private readonly int _gameSpeed;
+    private int _gameSpeed;
     private bool _isPaused;
+    private int curLevel = 0;
+    private Direction blockDirection = Direction.Right;
     
     public GameFacade(
         IGameRenderer renderer,
@@ -87,11 +89,44 @@ public class GameFacade
         _gameTimer.Enabled = true;
     }
 
+    private void NextLevel()
+    {
+        int levelSize = _level.GetApplesCount() + 3;
+        if (_snake.Size == (levelSize / 2) && curLevel == 0)
+        {
+            _gameTimer.Stop();
+            _gameTimer.Dispose();
+            _gameSpeed = 350;
+            SetupGameTimer();
+            curLevel = 1;
+        }
+
+        if (_snake.Size == (levelSize - levelSize / 4) && curLevel == 1)
+        {
+            _gameTimer.Stop();
+            _gameTimer.Dispose();
+            _gameSpeed = 250;
+            SetupGameTimer();
+            curLevel = 2;
+        }
+
+        if (_snake.Size + 1 == levelSize)
+        {
+            _gameTimer.Stop();
+            _gameTimer.Dispose();
+            _gameSpeed = 150;
+            SetupGameTimer();
+            curLevel = 3;
+        }
+    }
+
     private void OnGameTick(object sender, ElapsedEventArgs e)
     {
+        NextLevel();
         if (!_stateManager.IsGameRunning || _isPaused)
             return;
             
+        _snake._SetDirection(blockDirection);
         _snake.Move(_snake.Direction);
         
         if (!_level.CanMoveTo(_snake.Position))
@@ -125,7 +160,7 @@ public class GameFacade
             .SetProtection(false)
             .SetProtectionTime(0)
             .SetPosition(new Position(5, 5))
-            .SetWinSize(8)
+            .SetWinSize(_level.GetApplesCount() + 3)
             .SetDirection(Direction.Right)
             .SetBody()
             .Build();
@@ -169,7 +204,7 @@ public class GameFacade
                 var newPosition = GetPositionInDirection(_snake.Position, requestedDirection);
                 if (_level.CanMoveTo(newPosition))
                 {
-                    _snake._SetDirection(requestedDirection);
+                    blockDirection = requestedDirection;
                 }
             }
         }
@@ -227,7 +262,6 @@ public class GameFacade
     private void WinGame()
     {
         _stateManager.StopGame();
-        _renderer.Clear();
         _renderer.DrawText($"YOU WIN! Congratulations!");
         _renderer.DrawText($"Final size: {_snake.Size}");
         _renderer.DrawText("Press any key to continue...");
@@ -298,8 +332,15 @@ public class GameFacade
         _gameTimer?.Dispose();
         
         Console.Clear();
-        Console.WriteLine($"Game Over! Your final score: {_snake.Size}");
-        Console.WriteLine("Press any key to exit...");
+        if (_snake.Size >= _snake.WinSize)
+        {
+            WinGame();
+        }
+        else
+        {
+            Console.WriteLine($"Game Over! Your final score: {_snake.Size}");
+            Console.WriteLine("Press any key to exit...");
+        }
         Console.ReadKey();
         Console.CursorVisible = true;
     }
