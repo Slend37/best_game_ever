@@ -1,4 +1,4 @@
-# Snake Game - Best Game Ever
+# Snake Game — Best Game Ever
 
 ## Описание
 
