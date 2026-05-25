@@ -277,7 +277,7 @@ public class GameFacade
         _renderer.Draw(_drawBuffer);
         
         var bindings = _keyRemapper.GetCurrentBindings();
-        string status = $"Size: {_snake.Size} | Protection: {_snake.ProtectTime}s | Win: {_snake.WinSize} | ";
+        string status = $"Size: {_snake.Size} | Win: {_snake.WinSize} | ";
         status += $"Controls: [{bindings[Direction.Up]}/{bindings[Direction.Down]}/{bindings[Direction.Left]}/{bindings[Direction.Right]}] ";
         status += $"| Press R to remap keys";
         
