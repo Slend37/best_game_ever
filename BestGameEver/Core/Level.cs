@@ -11,6 +11,7 @@ public class Level
     private int widthMinSize = 5;
     private int heightMinSize = 5;
     private int newAppleChance = 5;
+    private int applesSpawned = 0;
 
     public Level(int width, int height)
     {
@@ -47,13 +48,14 @@ public class Level
         Random random = new Random((int)DateTime.Now.Ticks);
         while(random.Next(100) < newAppleChance)
             result.AddApple(CreateApple());
-            
+
         return result;
     }
 
     private IApple CreateApple()
     {
         Random random = new Random((int)DateTime.Now.Ticks);
+        applesSpawned += 1;
 
         return creators[random.Next(creators.Count)].Create();
     }
@@ -75,6 +77,11 @@ public class Level
     {
         return cells.ContainsKey(position) &&
                cells[position].IsPassable;
+    }
+
+    public int GetApplesCount()
+    {
+        return applesSpawned;
     }
     private readonly Dictionary<Position, Cell> cells = new();
     private readonly List<IAppleCreator> creators;
